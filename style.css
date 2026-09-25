@@ -1,0 +1,53 @@
+css
+
+:root {
+  --cor-fundo: #0f172a;       
+  --cor-cartao: #1e293b;      
+  --cor-neon: #3b82f6;         
+  --cor-texto: #e2e8f0;      
+  --cor-texto-suave: #94a3b8;  
+  --cor-aprovado: #22c55e;     
+  --cor-recuperacao: #f59e0b;  
+  --cor-reprovado: #ef4444;    
+}
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+  min-height: 100vh;
+  padding: 24px;
+}
+
+
+.cabecalho {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.cabecalho h1 {
+  font-size: 2rem;
+  color: var(--cor-neon);
+  margin-bottom: 8px;
+}
+
+.subtitulo {
+  color: var(--cor-texto-suave);
+  font-size: 1rem;
+}
+
+
+.lista-materias {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
