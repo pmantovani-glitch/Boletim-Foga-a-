@@ -221,4 +221,174 @@ async function fetchResultadoJson(resposta) {
 }
 
 // ===== PAINEL DE EDIÇÃO =====
-function alternarEditor
+function alternarEditor() {
+  const painel = document.getElementById("painel-editor");
+  if (painel.style.display === "none") {
+    painel.style.display = "block";
+  } else {
+    painel.style.display = "none";
+  }
+}
+
+function construirPainelEditor() {
+  const container = document.getElementById("container-campos-editor");
+  container.className = "grid-editor";
+  container.innerHTML = "";
+
+  materias.forEach((m, index) => {
+    const div = document.createElement("div");
+    div.className = "item-editor";
+
+    const nomeMateria = m.nome || m.materia;
+    
+    let n1 = m.nota_t1 !== undefined ? m.nota_t1 : (m.notas ? m.notas[0] : "");
+    let n2 = m.nota_t2 !== undefined ? m.nota_t2 : (m.notas ? m.notas[1] : "");
+    let n3 = m.nota_t3 !== undefined ? m.nota_t3 : (m.notas ? m.notas[2] : "");
+    
+    let f1 = m.faltas_t1 !== undefined ? m.faltas_t1 : 0;
+    let f2 = m.faltas_t2 !== undefined ? m.faltas_t2 : 0;
+    let f3 = m.faltas_t3 !== undefined ? m.faltas_t3 : 0;
+
+    div.innerHTML = `
+      <h3>${escaparHtml(nomeMateria)}</h3>
+      <div class="campos-trimestre">
+        <div>
+          <label>Nota T1</label>
+          <input type="text" id="n1_${index}" value="${n1 !== null && n1 !== undefined ? n1 : ''}">
+        </div>
+        <div>
+          <label>Faltas T1</label>
+          <input type="number" id="f1_${index}" value="${f1 !== null && f1 !== undefined ? f1 : 0}">
+        </div>
+        <div>
+          <label>Nota T2</label>
+          <input type="text" id="n2_${index}" value="${n2 !== null && n2 !== undefined ? n2 : ''}">
+        </div>
+        <div>
+          <label>Faltas T2</label>
+          <input type="number" id="f2_${index}" value="${f2 !== null && f2 !== undefined ? f2 : 0}">
+        </div>
+        <div>
+          <label>Nota T3</label>
+          <input type="text" id="n3_${index}" value="${n3 !== null && n3 !== undefined ? n3 : ''}">
+        </div>
+        <div>
+          <label>Faltas T3</label>
+          <input type="number" id="f3_${index}" value="${f3 !== null && f3 !== undefined ? f3 : 0}">
+        </div>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function escaparHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+// ===== VALIDAÇÃO DOS CAMPOS DIGITADOS =====
+function validarNotaDigitada(inputEl) {
+  inputEl.classList.remove("campo-invalido");
+  let val = inputEl.value.trim();
+  if (val === "") return null;
+
+  val = val.replace(",", ".");
+  const num = Number(val);
+
+  if (isNaN(num) || num < 0 || num > 10) {
+    inputEl.classList.add("campo-invalido");
+    return false;
+  }
+  return num;
+}
+
+function validarFaltaDigitada(inputEl) {
+  inputEl.classList.remove("campo-invalido");
+  let val = inputEl.value.trim();
+  if (val === "") {
+    inputEl.classList.add("campo-invalido");
+    return false;
+  }
+
+  const num = Number(val);
+  if (isNaN(num) || !Number.isInteger(num) || num < 0) {
+    inputEl.classList.add("campo-invalido");
+    return false;
+  }
+  return num;
+}
+
+// ===== SALVAR DADOS NA API =====
+async function salvarBoletim() {
+  const msgSalvar = document.getElementById("mensagem-salvar");
+  let temErro = false;
+  const disciplinasAtualizadas = [];
+
+  materias.forEach((m, index) => {
+    const elN1 = document.getElementById(`n1_${index}`);
+    const elN2 = document.getElementById(`n2_${index}`);
+    const elN3 = document.getElementById(`n3_${index}`);
+    const elF1 = document.getElementById(`f1_${index}`);
+    const elF2 = document.getElementById(`f2_${index}`);
+    const elF3 = document.getElementById(`f3_${index}`);
+
+    const vN1 = validarNotaDigitada(elN1);
+    const vN2 = validarNotaDigitada(elN2);
+    const vN3 = validarNotaDigitada(elN3);
+    const vF1 = validarFaltaDigitada(elF1);
+    const vF2 = validarFaltaDigitada(elF2);
+    const vF3 = validarFaltaDigitada(elF3);
+
+    if (vN1 === false || vN2 === false || vN3 === false || vF1 === false || vF2 === false || vF3 === false) {
+      temErro = true;
+    } else {
+      disciplinasAtualizadas.push({
+        nome: m.nome || m.materia,
+        nota_t1: vN1,
+        nota_t2: vN2,
+        nota_t3: vN3,
+        faltas_t1: vF1,
+        faltas_t2: vF2,
+        faltas_t3: vF3
+      });
+    }
+  });
+
+  if (temErro) {
+    msgSalvar.textContent = "Verifique os campos destacados em vermelho.";
+    return;
+  }
+
+  msgSalvar.textContent = "Salvando...";
+
+  try {
+    const resposta = await fetch(`${CONFIG_ALUNO.apiUrl}/api/v1/boletins/salvar`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        turma: CONFIG_ALUNO.turma,
+        numero_chamada: CONFIG_ALUNO.numeroChamada,
+        pin: pinSessao,
+        dados: {
+          disciplinas: disciplinasAtualizadas
+        }
+      })
+    });
+
+    if (!resposta.ok) {
+      msgSalvar.textContent = "Não foi possível salvar as alterações. Tente novamente.";
+      return;
+    }
+
+    materias = disciplinasAtualizadas;
+    atualizarInterface();
+    msgSalvar.textContent = "Dados salvos com sucesso.";
+
+  } catch (e) {
+    msgSalvar.textContent = "Não foi possível conectar ao servidor. Tente novamente.";
+  }
+}
