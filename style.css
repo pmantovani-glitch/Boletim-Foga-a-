@@ -249,7 +249,7 @@ body {
   background-color: rgba(239, 68, 68, 0.12);
 }
 
-/* ===== ÁREA DE LOGIN E EDITOR (ADICIONADOS PARA A NOVA ETAPA) ===== */
+/* ===== ÁREA DE LOGIN E EDITOR ===== */
 .cartao-login, .painel-editor {
   background: var(--cor-cartao);
   border: 1px solid var(--cor-borda);
@@ -316,4 +316,99 @@ button {
   transition: opacity 0.2s, transform 0.2s;
 }
 
-button:hover
+button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.acoes-boletim {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.btn-acao {
+  background: transparent;
+  border: 1px solid var(--cor-neon);
+  color: var(--cor-neon-2);
+}
+
+.grid-editor {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.item-editor {
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.item-editor h3 {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  color: var(--cor-neon-2);
+}
+
+.campos-trimestre {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.campos-trimestre label {
+  font-size: 0.75rem;
+  color: var(--cor-texto-suave);
+  display: block;
+}
+
+.campos-trimestre input {
+  width: 100%;
+}
+
+.mensagem-status {
+  display: block;
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: var(--cor-texto-suave);
+}
+
+/* ===== RODAPÉ ===== */
+.rodape {
+  text-align: center;
+  margin-top: 48px;
+  padding-top: 20px;
+  border-top: 1px solid var(--cor-borda);
+  color: var(--cor-texto-suave);
+  font-size: 0.85rem;
+}
+
+/* ===== ANIMAÇÃO ===== */
+@keyframes surgir {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ===== CELULAR ===== */
+@media (max-width: 600px) {
+  body { padding: 24px 14px 20px; }
+  .resumo { justify-content: flex-start; }
+  .resumo-item { min-width: 40%; }
+}
