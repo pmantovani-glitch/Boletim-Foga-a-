@@ -7,7 +7,7 @@ const CONFIG_ALUNO = {
 
 // ===== DADOS LOCALMENTE PRESERVADOS DO PROJETO =====
 var materias = [
-  { nome: "Matemática", notas: [7.6, 6.0, 2.1, 0.0] },
+  { nome: "Matemática", notas: [8.5, 7.0, 9.0, 8.0] },
   { nome: "Português",  notas: [7.5, 6.5, 8.0, 7.0] },
   { nome: "Ciências",   notas: [9.0, 9.5, 8.5, 10.0] },
   { nome: "História",   notas: [5.5, 6.0, 5.0, 6.5] },
